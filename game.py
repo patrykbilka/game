@@ -1,25 +1,29 @@
-import sys, pygame
+import pygame
+from materials.Player import Player
+
 pygame.init()
 
-size = width, height = 640, 480
-speed = [2, 2]
-black = 0, 0, 0
+BG = pygame.color.THECOLORS['lightblue']
+gameScreen = pygame.display.set_mode((640, 380))
+pygame.display.set_caption('Samoloty')
 
-screen = pygame.display.set_mode(size)
+clock = pygame.time.Clock()
 
-ball = pygame.image.load("ball.bmp")
-ballrect = ball.get_rect()
+exitGame = False
 
-while 1:
+player = Player()
+
+while not exitGame:
+    gameScreen.fill(BG)
     for event in pygame.event.get():
-        if event.type == pygame.QUIT: sys.exit()
+        if event.type == pygame.QUIT:
+            exitGame = True
+        player.listenEvents(event)
 
-    ballrect = ballrect.move(speed)
-    if ballrect.left < 0 or ballrect.right > width:
-        speed[0] = -speed[0]
-    if ballrect.top < 0 or ballrect.bottom > height:
-        speed[1] = -speed[1]
-
-    screen.fill(black)
-    screen.blit(ball, ballrect)
+    player.draw(gameScreen)
+    player.update()
     pygame.display.flip()
+    clock.tick(60)
+
+pygame.quit()
+quit()
