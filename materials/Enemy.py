@@ -10,11 +10,10 @@ class Enemy(pygame.sprite.Sprite):
         self.width = 150
         self.height = 70
         self.rect.y = random.randrange(0, HEIGHT - self.rect.height)
-        self.rect.x = random.randrange(WIDTH + 40, WIDTH + 300)
-        self.speed = 0.3
+        self.rect.x = WIDTH
+        self.speed = random.randrange(3, 5)
 
     def update(self):
         self.rect.x -= self.speed
         if (self.rect.x + self.rect.width) < 0:
-            self.rect.y = random.randrange(0, HEIGHT - self.rect.height)
-            self.rect.x = random.randrange(WIDTH + 40, WIDTH + 100)
+            self.remove()

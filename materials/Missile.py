@@ -1,4 +1,5 @@
 import os, pygame
+from state.Window import WIDTH, HEIGHT
 
 image = pygame.image.load(os.path.join('assets', 'missile.png'))
 
@@ -11,4 +12,5 @@ class Missile(pygame.sprite.Sprite):
 
     def update(self):
         self.rect.x += self.speed
-        
+        if self.rect.x > WIDTH:
+            self.remove()
