@@ -1,87 +1,60 @@
 import os, pygame
 from pygame.math import Vector2
-from state.Window import WIDTH, HEIGHT
+from state.static import WIDTH, HEIGHT
 from materials.Missile import Missile
 
-image = pygame.image.load(os.path.join('assets', 'plane2.png'))
+image = pygame.image.load(os.path.join('assets', 'player.png'))
 
 class Player(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
         self.image = image
         self.rect = self.image.get_rect()
-        self.level = None
-        self.width = 90
-        self.height = 50
+        self.rect.height = 45
+        self.levelocity = None
+        self.width = 150
+        self.height = 45
 
-        self.pos = Vector2(0, 0)
-        self.vel = Vector2(0, 0)
-        self.acc = Vector2(0, 0)
-
-        self.idleSpeed = 5
-        self.directionY = 0
-        self.directionX = 0
-        self.acceleration = 1
+        self.position = Vector2(0, 0)
+        self.velocity = Vector2(0, 0)
+        self.acceleration = Vector2(0, 0)
         self.imageStartingPoint = 50
 
-    def addForce(self, force):
-        self.acc += force
+    def addForce(self, speed):
+        self.acceleration += speed
 
     def kill(self):
+        print(self.rect)
         pygame.quit()
-
 
     def update(self, width, height):
         self.handleMovement()
-        print(self.rect)
-        self.vel *= 0.988
-        self.vel += self.acc
-        self.pos += self.vel
-        self.rect.x = self.pos.x
-        self.rect.y = self.pos.y
-        self.acc *= 0
+        self.velocity *= 0.988
+        self.velocity += self.acceleration
+        self.position += self.velocity
+        self.rect.x = self.position.x
+        self.rect.y = self.position.y
+        self.acceleration *= 0
 
         # Boundries
-
-        if self.pos.x + self.width > WIDTH:
-            self.vel = Vector2(0, 0)
-            self.pos.x = WIDTH - self.width
-        if self.pos.x < 0:
-            self.vel = Vector2(0, 0)
-            self.pos.x = 0
-        if self.pos.y + self.height > HEIGHT:
-            self.vel = Vector2(0, 0)
-            self.pos.y = HEIGHT - self.height
-        if self.pos.y < 0:
-            self.vel = Vector2(0, 0)
-            self.pos.y = 0
+        if self.position.x + self.width > WIDTH:
+            self.velocity = Vector2(0, 0)
+            self.position.x = WIDTH - self.width
+        if self.position.x < 0:
+            self.velocity = Vector2(0, 0)
+            self.position.x = 0
+        if self.position.y + self.height > HEIGHT:
+            self.velocity = Vector2(0, 0)
+            self.position.y = HEIGHT - self.height
+        if self.position.y < 0:
+            self.velocity = Vector2(0, 0)
+            self.position.y = 0
 
     def draw(self, surface):
-        surface.blit(self.image, self.pos, (0, self.imageStartingPoint, self.width, self.height))
-
-    def turnUp(self):
-        self.directionY = -self.acceleration
-        self.changeAnimationType(0)
-
-    def turnDown(self):
-        self.directionY = self.acceleration
-        self.changeAnimationType(100)
-
-    def turnLeft(self):
-        self.directionX = -self.acceleration
-
-    def turnRight(self):
-        self.directionX = self.acceleration
-        self.acceleration *= 1.1
+        surface.blit(self.image, self.position, (0, self.imageStartingPoint, self.width, self.height))
 
     def resetAnimation(self):
         self.changeAnimationType(50)
-
-    def stopMovementX(self, value = 0):
-        self.directionX = 0
-
-    def stopMovementY(self, value = 0):
-        self.directionY = 0
 
     def changeAnimationType(self, startingPoint):
         self.imageStartingPoint = startingPoint
@@ -89,23 +62,24 @@ class Player(pygame.sprite.Sprite):
     #shoot
     def shotMissile(self):
         missile = Missile()
-        missile.rect.y = self.pos.y + (self.height / 2) + 5
-        missile.rect.x = self.pos.x + self.width + 5
+        missile.rect.y = self.position.y + (self.height / 2) + 5
+        missile.rect.x = self.position.x + self.width + 5
         self.level.missiles.add(missile)
 
     def handleMovement(self):
+        speed = 0.3
         pressed = pygame.key.get_pressed()
         if pressed[pygame.K_UP]:
-            self.addForce(Vector2(0, -0.5))
+            self.addForce(Vector2(0, -speed))
             self.changeAnimationType(0)
         elif pressed[pygame.K_DOWN]:
-            self.addForce(Vector2(0, 0.5))
+            self.addForce(Vector2(0, speed))
             self.changeAnimationType(100)
         elif pressed[pygame.K_LEFT]:
-            self.addForce(Vector2(-0.5, 0))
+            self.addForce(Vector2(-speed, 0))
             self.resetAnimation()
         elif pressed[pygame.K_RIGHT]:
-            self.addForce(Vector2(0.5, 0))
+            self.addForce(Vector2(speed, 0))
             self.resetAnimation()
         else:
             self.resetAnimation()

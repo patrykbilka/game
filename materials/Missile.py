@@ -1,5 +1,5 @@
 import os, pygame
-from state.Window import WIDTH, HEIGHT
+from state.static import WIDTH, HEIGHT
 
 image = pygame.image.load(os.path.join('assets', 'missile.png'))
 

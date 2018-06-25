@@ -1,5 +1,5 @@
 import os, pygame
-from materials.Enemy import Enemy
+from materials.EnemyAirplane import EnemyAirplane
 
 class Level:
     def __init__(self, player):
@@ -19,18 +19,15 @@ class Level:
             self.enemies, self.missiles, True, True)
 
         playerHits = pygame.sprite.spritecollide(self.player, self.enemies, False)
-
         if playerHits:
             self.player.kill()
-
-        # print(colliding_platforms)
 
         self.current = pygame.time.get_ticks()
         seconds = (self.current - self.start)/1000
         if seconds > 1.0:
-            enemy = Enemy(self)
+            enemy = EnemyAirplane(self)
             self.enemies.add(enemy)
-            enemy = Enemy(self)
+            enemy = EnemyAirplane(self)
             self.enemies.add(enemy)
             self.start = pygame.time.get_ticks()
 
