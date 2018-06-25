@@ -20,7 +20,8 @@ class Level:
 
         playerHits = pygame.sprite.spritecollide(self.player, self.enemies, False)
 
-        print(playerHits)
+        if playerHits:
+            self.player.kill()
 
         # print(colliding_platforms)
 

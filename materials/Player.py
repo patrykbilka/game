@@ -10,7 +10,6 @@ class Player(pygame.sprite.Sprite):
         super().__init__()
         self.image = image
         self.rect = self.image.get_rect()
-        self.rect.x = WIDTH / 2
         self.level = None
         self.width = 90
         self.height = 50
@@ -29,14 +28,17 @@ class Player(pygame.sprite.Sprite):
         self.acc += force
 
     def kill(self):
-        print("Killed")
+        pygame.quit()
+
 
     def update(self, width, height):
-
         self.handleMovement()
-        self.vel *= 0.97777777777777777777777777777
+        print(self.rect)
+        self.vel *= 0.988
         self.vel += self.acc
         self.pos += self.vel
+        self.rect.x = self.pos.x
+        self.rect.y = self.pos.y
         self.acc *= 0
 
         # Boundries
