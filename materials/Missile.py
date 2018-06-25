@@ -12,5 +12,5 @@ class Missile(pygame.sprite.Sprite):
 
     def update(self):
         self.rect.x += self.speed
-        if self.rect.x > WIDTH:
-            self.remove()
+        if self.rect.x > WIDTH - self.rect.width:
+            self.kill()

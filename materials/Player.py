@@ -28,9 +28,12 @@ class Player(pygame.sprite.Sprite):
     def addForce(self, force):
         self.acc += force
 
+    def kill(self):
+        print("Killed")
+
     def update(self, width, height):
 
-        self.listenKeyboard()
+        self.handleMovement()
         self.vel *= 0.97777777777777777777777777777
         self.vel += self.acc
         self.pos += self.vel
@@ -84,11 +87,11 @@ class Player(pygame.sprite.Sprite):
     #shoot
     def shotMissile(self):
         missile = Missile()
-        missile.rect.y = self.rect.y + (self.height / 2) + 5
-        missile.rect.x = self.rect.x + self.rect.width + 5
+        missile.rect.y = self.pos.y + (self.height / 2) + 5
+        missile.rect.x = self.pos.x + self.width + 5
         self.level.missiles.add(missile)
 
-    def listenKeyboard(self):
+    def handleMovement(self):
         pressed = pygame.key.get_pressed()
         if pressed[pygame.K_UP]:
             self.addForce(Vector2(0, -0.5))
@@ -104,3 +107,8 @@ class Player(pygame.sprite.Sprite):
             self.resetAnimation()
         else:
             self.resetAnimation()
+
+    def listenKeyboard(self, event):
+     if event.type == pygame.KEYUP:
+         if event.key == pygame.K_SPACE:
+             self.shotMissile()

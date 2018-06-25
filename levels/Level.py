@@ -2,7 +2,8 @@ import os, pygame
 from materials.Enemy import Enemy
 
 class Level:
-    def __init__(self):
+    def __init__(self, player):
+        self.player = player
         self.start = pygame.time.get_ticks()
         self.current = pygame.time.get_ticks()
         self.missiles = pygame.sprite.Group()
@@ -14,8 +15,14 @@ class Level:
         self.enemies.draw(surface)
 
     def update(self):
-        # colliding_platforms = pygame.sprite.spritecollide(
-        #     self, self.level.set_of_platforms, False)
+        colliding_platforms = pygame.sprite.groupcollide(
+            self.enemies, self.missiles, True, True)
+
+        playerHits = pygame.sprite.spritecollide(self.player, self.enemies, False)
+
+        print(playerHits)
+
+        # print(colliding_platforms)
 
         self.current = pygame.time.get_ticks()
         seconds = (self.current - self.start)/1000

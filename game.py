@@ -13,7 +13,7 @@ from levels.Level import Level
 # exitGame = False
 
 player = Player()
-currentLevel = Level()
+currentLevel = Level(player)
 player.level = currentLevel
 class Game(object):
     def __init__(self):
@@ -28,6 +28,8 @@ class Game(object):
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     sys.exit(0)
+
+                player.listenKeyboard(event)
 
             self.tps_delta += self.tps_clock.tick() / 1000.0
             while self.tps_delta > 1 / self.tps_max:
