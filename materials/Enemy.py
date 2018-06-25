@@ -3,15 +3,16 @@ from state.Window import WIDTH, HEIGHT
 image = pygame.image.load(os.path.join('assets', 'enemy.png'))
 
 class Enemy(pygame.sprite.Sprite):
-    def __init__(self):
+    def __init__(self, level):
         super().__init__()
+        self.level = level
         self.image = image
         self.rect = self.image.get_rect()
         self.width = 150
         self.height = 70
         self.rect.y = random.randrange(0, HEIGHT - self.rect.height)
         self.rect.x = WIDTH
-        self.speed = random.randrange(3, 5)
+        self.speed = random.randrange(3, 8)
 
     def update(self):
         self.rect.x -= self.speed

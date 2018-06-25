@@ -1,7 +1,7 @@
 import pygame
 
-WIDTH = 640
-HEIGHT = 480
+WIDTH = 1000
+HEIGHT = 640
 
 class Window(pygame.sprite.Sprite):
     def __init__(self):

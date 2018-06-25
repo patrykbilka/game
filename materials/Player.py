@@ -1,4 +1,5 @@
 import os, pygame
+from pygame.math import Vector2
 from state.Window import WIDTH, HEIGHT
 from materials.Missile import Missile
 
@@ -13,37 +14,66 @@ class Player(pygame.sprite.Sprite):
         self.level = None
         self.width = 90
         self.height = 50
+
+        self.pos = Vector2(0, 0)
+        self.vel = Vector2(0, 0)
+        self.acc = Vector2(0, 0)
+
         self.idleSpeed = 5
-        self.directionY = -10
-        self.directionX = - self.idleSpeed
-        self.speed = 3
+        self.directionY = 0
+        self.directionX = 0
+        self.acceleration = 1
         self.imageStartingPoint = 50
 
+    def addForce(self, force):
+        self.acc += force
+
+    def update(self, width, height):
+
+        self.listenKeyboard()
+        self.vel *= 0.97777777777777777777777777777
+        self.vel += self.acc
+        self.pos += self.vel
+        self.acc *= 0
+
+        # Boundries
+
+        if self.pos.x + self.width > WIDTH:
+            self.vel = Vector2(0, 0)
+            self.pos.x = WIDTH - self.width
+        if self.pos.x < 0:
+            self.vel = Vector2(0, 0)
+            self.pos.x = 0
+        if self.pos.y + self.height > HEIGHT:
+            self.vel = Vector2(0, 0)
+            self.pos.y = HEIGHT - self.height
+        if self.pos.y < 0:
+            self.vel = Vector2(0, 0)
+            self.pos.y = 0
+
     def draw(self, surface):
-        surface.blit(self.image, self.rect, (0, self.imageStartingPoint, self.width, self.height))
+        surface.blit(self.image, self.pos, (0, self.imageStartingPoint, self.width, self.height))
 
     def turnUp(self):
-        self.directionY = -self.speed
+        self.directionY = -self.acceleration
         self.changeAnimationType(0)
 
     def turnDown(self):
-        self.directionY = self.speed
+        self.directionY = self.acceleration
         self.changeAnimationType(100)
 
     def turnLeft(self):
-        self.directionX = -(self.speed / 2)
-        self.changeAnimationType(50)
+        self.directionX = -self.acceleration
 
     def turnRight(self):
-        self.directionX = (self.speed - (self.speed / 2))
-        self.changeAnimationType(50)
-
+        self.directionX = self.acceleration
+        self.acceleration *= 1.1
 
     def resetAnimation(self):
         self.changeAnimationType(50)
 
     def stopMovementX(self, value = 0):
-        self.directionX = - value / 2
+        self.directionX = 0
 
     def stopMovementY(self, value = 0):
         self.directionY = 0
@@ -51,37 +81,26 @@ class Player(pygame.sprite.Sprite):
     def changeAnimationType(self, startingPoint):
         self.imageStartingPoint = startingPoint
 
-    def update(self, screenSize):
-        if self.rect.y + self.directionY < screenSize[1] - self.height - 50 and self.rect.y + self.directionY > 0:
-            self.rect.y += self.directionY
-        if self.rect.x + self.directionX < screenSize[0] - self.width and self.rect.x + self.directionX > 0:
-            print(self.rect.x + self.directionX)
-            self.rect.x += self.directionX
-
     #shoot
     def shotMissile(self):
         missile = Missile()
-        print(self.rect)
         missile.rect.y = self.rect.y + (self.height / 2) + 5
         missile.rect.x = self.rect.x + self.rect.width + 5
         self.level.missiles.add(missile)
 
-    def listenEvents(self, event):
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_UP:
-                self.turnUp()
-            elif event.key == pygame.K_DOWN:
-                self.turnDown()
-            elif event.key == pygame.K_RIGHT:
-                self.turnRight()
-            elif event.key == pygame.K_SPACE:
-                self.shotMissile()
-        if event.type == pygame.KEYUP:
-            if event.key == pygame.K_UP:
-                self.stopMovementY(self.idleSpeed)
-                self.resetAnimation()
-            elif event.key == pygame.K_DOWN:
-                self.stopMovementY(self.idleSpeed)
-                self.resetAnimation()
-            elif event.key == pygame.K_RIGHT:
-                self.stopMovementX(self.idleSpeed)
+    def listenKeyboard(self):
+        pressed = pygame.key.get_pressed()
+        if pressed[pygame.K_UP]:
+            self.addForce(Vector2(0, -0.5))
+            self.changeAnimationType(0)
+        elif pressed[pygame.K_DOWN]:
+            self.addForce(Vector2(0, 0.5))
+            self.changeAnimationType(100)
+        elif pressed[pygame.K_LEFT]:
+            self.addForce(Vector2(-0.5, 0))
+            self.resetAnimation()
+        elif pressed[pygame.K_RIGHT]:
+            self.addForce(Vector2(0.5, 0))
+            self.resetAnimation()
+        else:
+            self.resetAnimation()
