@@ -2,6 +2,7 @@ import os, pygame
 from pygame.math import Vector2
 from state.static import WIDTH, HEIGHT
 from materials.Missile import Missile
+from materials.Bomb import Bomb
 
 image = pygame.image.load(os.path.join('assets', 'player.png'))
 
@@ -10,10 +11,10 @@ class Player(pygame.sprite.Sprite):
         super().__init__()
         self.image = image
         self.rect = self.image.get_rect()
-        self.rect.height = 45
+        self.rect.height = 50
         self.levelocity = None
-        self.width = 150
-        self.height = 45
+        self.width = 148
+        self.height = 50
 
         self.position = Vector2(0, 0)
         self.velocity = Vector2(0, 0)
@@ -24,7 +25,6 @@ class Player(pygame.sprite.Sprite):
         self.acceleration += speed
 
     def kill(self):
-        print(self.rect)
         pygame.quit()
 
     def update(self, width, height):
@@ -65,6 +65,12 @@ class Player(pygame.sprite.Sprite):
         missile.rect.y = self.position.y + (self.height / 2) + 5
         missile.rect.x = self.position.x + self.width + 5
         self.level.missiles.add(missile)
+    #shoot
+    def shotBomb(self):
+        bomb = Bomb()
+        bomb.rect.y = self.position.y + (self.height / 2) + 5
+        bomb.rect.x = self.position.x + (self.width / 2) - bomb.rect.width / 2
+        self.level.bombs.add(bomb)
 
     def handleMovement(self):
         speed = 0.3
@@ -85,6 +91,9 @@ class Player(pygame.sprite.Sprite):
             self.resetAnimation()
 
     def listenKeyboard(self, event):
-     if event.type == pygame.KEYUP:
+     if event.type == pygame.KEYDOWN:
          if event.key == pygame.K_SPACE:
              self.shotMissile()
+
+         if event.key == pygame.K_r:
+             self.shotBomb()
