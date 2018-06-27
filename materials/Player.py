@@ -1,6 +1,6 @@
 import os, pygame
 from pygame.math import Vector2
-from state.static import WIDTH, HEIGHT
+from static.resolution import WIDTH, HEIGHT
 from materials.Missile import Missile
 from materials.Bomb import Bomb
 
@@ -15,7 +15,10 @@ class Player(pygame.sprite.Sprite):
         self.levelocity = None
         self.width = 148
         self.height = 50
-
+        self.points = 0
+        self.win = False
+        self.lost = False
+        self.canDropBomb = True
         self.position = Vector2(0, 0)
         self.velocity = Vector2(0, 0)
         self.acceleration = Vector2(0, 0)
@@ -27,9 +30,9 @@ class Player(pygame.sprite.Sprite):
     def kill(self):
         pygame.quit()
 
-    def update(self, width, height):
+    def update(self):
         self.handleMovement()
-        self.velocity *= 0.988
+        self.velocity *= 0.9777
         self.velocity += self.acceleration
         self.position += self.velocity
         self.rect.x = self.position.x
@@ -43,9 +46,9 @@ class Player(pygame.sprite.Sprite):
         if self.position.x < 0:
             self.velocity = Vector2(0, 0)
             self.position.x = 0
-        if self.position.y + self.height > HEIGHT:
+        if self.position.y + self.height > (HEIGHT - 120):
             self.velocity = Vector2(0, 0)
-            self.position.y = HEIGHT - self.height
+            self.position.y = HEIGHT - self.height - 120
         if self.position.y < 0:
             self.velocity = Vector2(0, 0)
             self.position.y = 0
@@ -61,16 +64,18 @@ class Player(pygame.sprite.Sprite):
 
     #shoot
     def shotMissile(self):
-        missile = Missile()
-        missile.rect.y = self.position.y + (self.height / 2) + 5
-        missile.rect.x = self.position.x + self.width + 5
-        self.level.missiles.add(missile)
+        if len(self.level.missiles) < 4:
+            missile = Missile()
+            missile.rect.y = self.position.y + (self.height / 2) + 5
+            missile.rect.x = self.position.x + self.width + 5
+            self.level.missiles.add(missile)
     #shoot
     def shotBomb(self):
-        bomb = Bomb()
-        bomb.rect.y = self.position.y + (self.height / 2) + 5
-        bomb.rect.x = self.position.x + (self.width / 2) - bomb.rect.width / 2
-        self.level.bombs.add(bomb)
+        if len(self.level.bombs) <= 2:
+            bomb = Bomb()
+            bomb.rect.y = self.position.y + (self.height / 2) + 5
+            bomb.rect.x = self.position.x + (self.width / 2) - bomb.rect.width / 2
+            self.level.bombs.add(bomb)
 
     def handleMovement(self):
         speed = 0.3

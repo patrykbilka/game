@@ -1,5 +1,5 @@
 import os, pygame
-from state.static import WIDTH, HEIGHT
+from static.resolution import WIDTH, HEIGHT
 
 image = pygame.image.load(os.path.join('assets', 'bomb.png'))
 
